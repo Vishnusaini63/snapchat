@@ -84,12 +84,29 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/uploads", express.static("uploads", {
-  setHeaders: (res, path) => {
-    if (path.endsWith(".webm")) {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith(".webm")) {
       res.setHeader("Content-Type", "audio/webm");
     }
   }
 }));
+
+// 🛡️ Content Security Policy (Fixes Font & Socket issues)
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; " +
+    "font-src 'self' https://snapchat-vgrt.onrender.com data:; " +
+    "img-src 'self' data: https:; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+    "style-src 'self' 'unsafe-inline'; " +
+    "connect-src 'self' ws: wss: https: snapchat-vgrt.onrender.com;"
+  );
+  next();
+});
+
+const frontendPath = path.join(__dirname, "../snapchat-frontend/dist");
+app.use(express.static(frontendPath));
 
 // routes
 app.use("/api/auth", authRoutes);
@@ -1632,26 +1649,21 @@ socket.on("send_media", async (data) => {
   });
 });
 
+// 🌐 Catch-all route to serve index.html for React Router
+app.get("*", (req, res) => {
+  if (req.path.startsWith("/api")) return res.status(404).json({ error: "API route not found" });
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
+});
 
 // 🔥 Global Error Handling Middleware
-// This catches Multer errors (like file size or invalid type) and returns 400 instead of 500
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
-    // Handle Multer-specific errors (e.g., file too large, unexpected field name)
     return res.status(400).json({ error: `Upload error: ${err.message}` });
   } else if (err) {
-    // Handle other errors (like the one thrown in fileFilter)
     console.error("Server Error:", err.message);
     return res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
   }
   next();
 });
-
-
-     {/* Reactions dfgchjbnkml;,kjvcxvbnm,./mnvcxzvbnm,.mnbvcxvbnm,.kjxzcvjklkjhgfdxzcvbjn*/}
-      {/* Reactions dfgchjbnkml;,kjvcxvbnm,./mnvcxzvbnm,.mnbvcxvbnm,.kjxzcvjklkjhgfdxzcvbjn*/}
-      {/* Reactions dfgchjbnkml;,kjvcxvbnm,./mnvcxzvbnm,.mnbvcxvbnm,.kjxzcvjklkjhgfdxzcvbjn*/}
-      {/* Reactions dfgchjbnkml;,kjvcxvbnm,./mnvcxzvbnm,.mnbvcxvbnm,.kjxzcvjklkjhgfdxzcvbjn*/}
-     
