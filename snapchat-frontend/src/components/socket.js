@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 
-const socket = io("http://snapchat-vgrt.onrender.com", {
+const socket = io("https://snapchat-vgrt.onrender.com", {
   transports: ["websocket"],
   upgrade: false
 });
