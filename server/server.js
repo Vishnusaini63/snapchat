@@ -108,6 +108,9 @@ app.use((req, res, next) => {
 const frontendPath = path.join(__dirname, "../snapchat-frontend/dist");
 app.use(express.static(frontendPath));
 
+
+//vishnusaini
+
 // routes
 app.use("/api/auth", authRoutes);
 
