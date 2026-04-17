@@ -130,6 +130,10 @@ app.post("/api/auth/reject-request", verifyToken, (req, res) => {
   );
 });
 
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
+
 // 🔥 NEW: API to fetch Chat History from Database
 app.get("/api/messages/history/:user1/:user2", (req, res) => {
   const { user1, user2 } = req.params;
@@ -424,9 +428,10 @@ const io = new Server(server, {
   pingInterval: 25000
 });
 
-// ✅ ONLY ONE LISTEN
-server.listen(5000, () => {
-  console.log("Server running on port 5000 🚀");
+const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} 🚀`);
 });
 
 
@@ -1651,15 +1656,11 @@ socket.on("send_media", async (data) => {
   });
 });
 
-// 🌐 Catch-all route to serve index.html for React Router
-app.get("*", (req, res) => {
-  if (req.path.startsWith("/api")) return res.status(404).json({ error: "API route not found" });
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
+
 
 });
 
-// 🔥 Global Error Handling Middleware
+
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     return res.status(400).json({ error: `Upload error: ${err.message}` });
@@ -1668,4 +1669,13 @@ app.use((err, req, res, next) => {
     return res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
   }
   next();
+});
+
+
+
+app.get("*", (req, res) => {
+  if (req.path.startsWith("/api")) {
+    return res.status(404).json({ error: "API route not found" });
+  }
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
