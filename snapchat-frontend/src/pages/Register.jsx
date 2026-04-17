@@ -7,7 +7,7 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+const API = window.location.origin;
   const handleRegister = async () => {
     if (!username || !email || !password) {
       alert("Fill all fields");
