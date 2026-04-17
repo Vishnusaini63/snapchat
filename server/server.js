@@ -91,16 +91,10 @@ app.use("/uploads", express.static("uploads", {
   }
 }));
 
-// 🛡️ Content Security Policy (Fixes Font & Socket issues)
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self'; " +
-    "font-src 'self' https://snapchat-vgrt.onrender.com data:; " +
-    "img-src 'self' data: https:; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-    "style-src 'self' 'unsafe-inline'; " +
-    "connect-src 'self' ws: wss: https: snapchat-vgrt.onrender.com;"
+    "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;"
   );
   next();
 });
@@ -456,7 +450,7 @@ app.post("/api/upload-audio", upload.single("audio"), (req, res) => {
   }
 
   const filePath = `/uploads/${req.file.filename}`;
-  const fullUrl = "http://localhost:5000" + filePath;
+  const fullUrl = `${req.protocol}://${req.get("host")}${filePath}`;
 
   res.json({ url: fullUrl });
 });
@@ -468,7 +462,12 @@ app.post("/api/upload-media", upload.single("media"), (req, res) => {
   }
 
   const filePath = `/uploads/${req.file.filename}`;
-  res.json({ url: "http://localhost:5000" + filePath, type: req.file.mimetype.split('/')[0] });
+  const fullUrl = `${req.protocol}://${req.get("host")}${filePath}`;
+
+  res.json({
+    url: fullUrl,
+    type: req.file.mimetype.split('/')[0]
+  });
 });
 
 app.post("/api/chat/wallpaper", upload.single("wallpaper"), (req, res) => {
@@ -479,7 +478,7 @@ app.post("/api/chat/wallpaper", upload.single("wallpaper"), (req, res) => {
   let { user1, user2, type } = req.body; // type = "me" | "everyone"
 
   const filePath = `/uploads/${req.file.filename}`;
-  const fullUrl = "http://localhost:5000" + filePath;
+const fullUrl = `${req.protocol}://${req.get("host")}${filePath}`;
 
   const u1 = Math.min(Number(user1), Number(user2));
   const u2 = Math.max(Number(user1), Number(user2));
@@ -534,7 +533,7 @@ app.get("/api/chat/wallpaper/:user1/:user2", (req, res) => {
   db.query(sql, [u1, u2, user1, u1, u2], (err, result) => {
     if (result.length) {
       res.json({
-        wallpaper: "http://localhost:5000" + result[0].wallpaper
+        wallpaper: `${req.protocol}://${req.get("host")}${result[0].wallpaper}`
       });
     } else {
       res.json({ wallpaper: null });
