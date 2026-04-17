@@ -152,7 +152,7 @@ const menuItem = {
 
   const openForwardPicker = async () => {
     try {
-      const res = await axios.get("http://snapchat-vgrt.onrender.com/api/auth/friends", {
+      const res = await axios.get("https://snapchat-vgrt.onrender.com/api/auth/friends", {
         headers: { authorization: "Bearer " + localStorage.getItem("token") }
       });
       setFriendsList(res.data);
@@ -268,7 +268,7 @@ const deleteForEveryone = () => {
     formData.append("media", blob, type === "image" ? "capture.jpg" : "capture.webm");
 
     try {
-      const res = await axios.post("http://snapchat-vgrt.onrender.com/api/upload-media", formData);
+      const res = await axios.post("https://snapchat-vgrt.onrender.com/api/upload-media", formData);
       const { url } = res.data;
       const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const localId = Date.now().toString();
@@ -505,7 +505,7 @@ useEffect(() => {
       setChatWallpaper(null);
       return;
     }
-    axios.get(`http://snapchat-vgrt.onrender.com/api/chat/wallpaper/${user.id}/${friend.id}`)
+    axios.get(`https://snapchat-vgrt.onrender.com/api/chat/wallpaper/${user.id}/${friend.id}`)
       .then(res => {
         if (res.data?.wallpaper) {
           setChatWallpaper(res.data.wallpaper + "?t=" + Date.now());
@@ -561,7 +561,7 @@ useEffect(() => {
   // 🎨 Theme fetch logic with safety check
   useEffect(() => {
     if (!user?.id || !friend?.id) return;
-    axios.get(`http://snapchat-vgrt.onrender.com/api/chat/theme/${user.id}/${friend.id}`)
+    axios.get(`https://snapchat-vgrt.onrender.com/api/chat/theme/${user.id}/${friend.id}`)
       .then(res => {
         if (res.data?.theme) setChatTheme(res.data.theme);
       })
@@ -595,7 +595,7 @@ useEffect(() => {
     const fetchMessages = async () => {
       if (!user?.id || !friend?.id) return; // 🔥 Safety check added here too
       try {
-        const res = await axios.get(`http://snapchat-vgrt.onrender.com/api/messages/history/${user.id}/${friend.id}`);
+        const res = await axios.get(`https://snapchat-vgrt.onrender.com/api/messages/history/${user.id}/${friend.id}`);
         
     const formattedMessages = res.data.map(msg => ({
   id: msg.id,
@@ -636,7 +636,7 @@ useEffect(() => {
   const fetchDeleteMode = async () => {
     try {
       const res = await axios.get(
-        `http://snapchat-vgrt.onrender.com/api/chat/delete-mode/${user.id}/${friend.id}`
+        `https://snapchat-vgrt.onrender.com/api/chat/delete-mode/${user.id}/${friend.id}`
       );
 
       console.log("CHATBOX MODE:", res.data); // debug
@@ -654,7 +654,7 @@ useEffect(() => {
   const fetchMuteSettings = async () => {
     try {
       const res = await axios.get(
-        `http://snapchat-vgrt.onrender.com/api/chat/mute-settings/${user.id}/${friend.id}`
+        `https://snapchat-vgrt.onrender.com/api/chat/mute-settings/${user.id}/${friend.id}`
       );
 
       if (res.data) {
@@ -1030,7 +1030,7 @@ socket.off("reactionUpdated");
       setChatTheme(theme);
       setShowThemePopup(false);
 
-      await axios.post("http://snapchat-vgrt.onrender.com/api/chat/theme", {
+      await axios.post("https://snapchat-vgrt.onrender.com/api/chat/theme", {
         user1: user.id,
         user2: friend.id,
         theme,
@@ -1069,7 +1069,7 @@ const handleWallpaperChange = async (e) => {
   formData.append("type", wallpaperType); // ✅ IMPORTANT
 
   try {
-    const res = await axios.post("http://snapchat-vgrt.onrender.com/api/chat/wallpaper", formData);
+    const res = await axios.post("https://snapchat-vgrt.onrender.com/api/chat/wallpaper", formData);
 setChatWallpaper(null); // 🔥 reset
 
 setTimeout(() => {
@@ -1172,7 +1172,7 @@ const startRecording = async () => {
         const formData = new FormData();
         formData.append("audio", audioBlob);
 
-        const res = await fetch("http://snapchat-vgrt.onrender.com/api/upload-audio", {
+        const res = await fetch("https://snapchat-vgrt.onrender.com/api/upload-audio", {
           method: "POST",
           body: formData
         });
@@ -1297,7 +1297,7 @@ const formatRecordingTime = (seconds) => {
     formData.append("media", file);
 
     try {
-      const res = await axios.post("http://snapchat-vgrt.onrender.com/api/upload-media", formData);
+      const res = await axios.post("https://snapchat-vgrt.onrender.com/api/upload-media", formData);
       const { url, type } = res.data;
       const mediaType = forceDocument ? "document" : (type === "image" ? "image" : (type === "video" ? "video" : "document")); // 🔥 NEW: Handle documents
       const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

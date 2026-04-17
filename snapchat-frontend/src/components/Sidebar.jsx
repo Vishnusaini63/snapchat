@@ -59,7 +59,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
   const token = localStorage.getItem("token");
   
   useEffect(() => {
-    axios.get("http://snapchat-vgrt.onrender.com/api/auth/profile", {
+    axios.get("https://snapchat-vgrt.onrender.com/api/auth/profile", {
       headers: { authorization: "Bearer " + token }
     })
     .then(res => {
@@ -69,7 +69,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
 
     // 🔥 Fetch unread counts from server on load
     if (currentUser?.id) {
-      axios.get(`http://snapchat-vgrt.onrender.com/api/messages/unread-counts/${currentUser.id}`)
+      axios.get(`https://snapchat-vgrt.onrender.com/api/messages/unread-counts/${currentUser.id}`)
         .then(res => {
           const counts = {};
           res.data.forEach(item => {
@@ -80,7 +80,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
         });
 
       // 🔥 Fetch latest message text for each friend from DB
-      axios.get(`http://snapchat-vgrt.onrender.com/api/messages/last-messages/${currentUser.id}`)
+      axios.get(`https://snapchat-vgrt.onrender.com/api/messages/last-messages/${currentUser.id}`)
         .then(res => {
           const msgs = {};
           res.data.forEach(m => {
@@ -90,7 +90,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
           localStorage.setItem("lastMessages", JSON.stringify({ ...lastMessages, ...msgs }));
         });
 // 🔥 Fetch Mute Settings for all friends
-      axios.get(`http://snapchat-vgrt.onrender.com/api/chat/mute-settings/all/${currentUser.id}`)
+      axios.get(`https://snapchat-vgrt.onrender.com/api/chat/mute-settings/all/${currentUser.id}`)
         .then(res => {
          if (res.data && Array.isArray(res.data)) {
             const settings = {};
@@ -103,7 +103,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
 
 
       // 🔥 Fetch initial pending requests count
-      axios.get("http://snapchat-vgrt.onrender.com/api/auth/requests", {
+      axios.get("https://snapchat-vgrt.onrender.com/api/auth/requests", {
         headers: { authorization: "Bearer " + token }
       })
       .then(res => {
@@ -316,7 +316,7 @@ useEffect(() => {
 
 
   const getFriends = () => {
-    axios.get("http://snapchat-vgrt.onrender.com/api/auth/friends", {
+    axios.get("https://snapchat-vgrt.onrender.com/api/auth/friends", {
       headers: { authorization: "Bearer " + token }
     })
     .then(res => setFriends(res.data.map(f => ({ ...f, avatar: f.avatar || f.profile_pic }))))
