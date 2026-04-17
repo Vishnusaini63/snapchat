@@ -17,7 +17,7 @@ const Register = () => {
     try {
 
       const res = await axios.post(
-        "http://snapchat-vgrt.onrender.com/api/auth/register",
+        `${API}/api/auth/register`,
         {
           username,
           email,

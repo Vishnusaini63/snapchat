@@ -39,7 +39,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
   const [requestBadge, setRequestBadge] = useState(0); // 🔥 New request badge count
   const ringtone = React.useRef(new Audio("https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3")).current;
   const receiveSound = React.useRef(new Audio("https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3")).current;
-  
+  const API = window.location.origin;
   // 🔥 Last messages preview state
   const [lastMessages, setLastMessages] = useState(() => {
     const saved = localStorage.getItem("lastMessages");
@@ -59,7 +59,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
   const token = localStorage.getItem("token");
   
   useEffect(() => {
-    axios.get("https://snapchat-vgrt.onrender.com/api/auth/profile", {
+    axios.get(`${API}/api/auth/profile`, {
       headers: { authorization: "Bearer " + token }
     })
     .then(res => {
@@ -69,7 +69,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
 
     // 🔥 Fetch unread counts from server on load
     if (currentUser?.id) {
-      axios.get(`https://snapchat-vgrt.onrender.com/api/messages/unread-counts/${currentUser.id}`)
+axios.get(`${API}/api/messages/unread-counts/${currentUser.id}`)
         .then(res => {
           const counts = {};
           res.data.forEach(item => {
@@ -80,7 +80,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
         });
 
       // 🔥 Fetch latest message text for each friend from DB
-      axios.get(`https://snapchat-vgrt.onrender.com/api/messages/last-messages/${currentUser.id}`)
+axios.get(`${API}/api/messages/last-messages/${currentUser.id}`)
         .then(res => {
           const msgs = {};
           res.data.forEach(m => {
@@ -90,7 +90,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
           localStorage.setItem("lastMessages", JSON.stringify({ ...lastMessages, ...msgs }));
         });
 // 🔥 Fetch Mute Settings for all friends
-      axios.get(`https://snapchat-vgrt.onrender.com/api/chat/mute-settings/all/${currentUser.id}`)
+axios.get(`${API}/api/chat/mute-settings/all/${currentUser.id}`)
         .then(res => {
          if (res.data && Array.isArray(res.data)) {
             const settings = {};
@@ -103,7 +103,7 @@ const Sidebar = ({ onSelectFriend, selectedFriend }) => {
 
 
       // 🔥 Fetch initial pending requests count
-      axios.get("https://snapchat-vgrt.onrender.com/api/auth/requests", {
+    axios.get(`${API}/api/auth/requests`, {
         headers: { authorization: "Bearer " + token }
       })
       .then(res => {
@@ -316,7 +316,7 @@ useEffect(() => {
 
 
   const getFriends = () => {
-    axios.get("https://snapchat-vgrt.onrender.com/api/auth/friends", {
+axios.get(`${API}/api/auth/friends`, {
       headers: { authorization: "Bearer " + token }
     })
     .then(res => setFriends(res.data.map(f => ({ ...f, avatar: f.avatar || f.profile_pic }))))

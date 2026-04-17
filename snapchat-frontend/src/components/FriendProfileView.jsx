@@ -18,12 +18,12 @@ const [showForwardPicker, setShowForwardPicker] = useState(false);
   const [showDeleteOptions, setShowDeleteOptions] = useState(false);
   const [deleteAfter, setDeleteAfter] = useState('never');
 const [friendsList, setFriendsList] = useState([]);
- 
+ const API = window.location.origin;
 useEffect(() => {
   const fetchDeleteMode = async () => {
     try {
       const res = await axios.get(
-        `https://snapchat-vgrt.onrender.com/api/chat/delete-mode/${user.id}/${friend.id}`
+     `${API}/api/chat/delete-mode/${user.id}/${friend.id}`
       );
 
       console.log("DELETE MODE API:", res.data); // 🔥 debug
@@ -42,7 +42,7 @@ useEffect(() => {
   const fetchMuteSettings = async () => {
     try {
       const res = await axios.get(
-        `https://snapchat-vgrt.onrender.com/api/chat/mute-settings/${user.id}/${friend.id}`
+        `${API}/api/chat/mute-settings/${user.id}/${friend.id}`
       );
       if (res.data) {
         setIsChatMuted(!!res.data.isChatMuted);
@@ -66,7 +66,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchChatContent = async () => {
       try {
-        const res = await axios.get(`https://snapchat-vgrt.onrender.com/api/messages/history/${user.id}/${friend.id}`);
+        const res = await axios.get(`${API}/api/messages/history/${user.id}/${friend.id}`);
         const allMessages = res.data;
 
         const mediaFiles = [];
@@ -140,7 +140,7 @@ socket.on("messageDeleted", ({ messageId }) => {
 
 const handleRemoveFriend = async () => {
   try {
-    await axios.delete("https://snapchat-vgrt.onrender.com/api/friends/remove", {
+    await axios.delete(`${API}/api/friends/remove`, {
       data: {
         userId: user.id,
         friendId: friend.id
@@ -160,7 +160,7 @@ const handleRemoveFriend = async () => {
 
 const handleEditName = async (nickname) => {
   try {
-    await axios.post("https://snapchat-vgrt.onrender.com/api/friends/nickname", {
+    await axios.post(`${API}/api/friends/nickname`, {
       userId: user.id,
       friendId: friend.id,
       nickname
@@ -177,7 +177,7 @@ const handleBlock = async () => {
   if (!window.confirm("Block this user?")) return;
 
   try {
-    await axios.post("https://snapchat-vgrt.onrender.com/api/friends/block", {
+    await axios.post(`${API}/api/friends/block`, {
       userId: user.id,
       friendId: friend.id
     });
@@ -193,7 +193,7 @@ const handleBlock = async () => {
 
   const openForwardPicker = async () => {
     try {
-      const res = await axios.get("https://snapchat-vgrt.onrender.com/api/auth/friends", {
+      const res = await axios.get(`${API}/api/auth/friends`, {
         headers: { authorization: "Bearer " + localStorage.getItem("token") }
       });
       setFriendsList(res.data);
@@ -240,7 +240,7 @@ const handleToggleMute = async (type) => {
   console.log("SENDING:", newChatMuted, newCallMuted); // 🔥 DEBUG
 
   try {
-    await axios.post("https://snapchat-vgrt.onrender.com/api/chat/mute-settings", {
+    await axios.post(`${API}/api/chat/mute-settings`, {
       userId: user.id,
       friendId: friend.id,
       isChatMuted: newChatMuted,
@@ -253,7 +253,7 @@ const handleToggleMute = async (type) => {
  
 const handleSaveDeleteMode = async () => {
   try {
-    await axios.post("https://snapchat-vgrt.onrender.com/api/chat/delete-mode", {
+    await axios.post(`${API}/api/chat/delete-mode`, {
       userId: user.id,
       friendId: friend.id,
       deleteMode: deleteAfter, 

@@ -14,7 +14,7 @@ const ResetPassword = () => {
     try {
 
       const res = await axios.post(
-        `http://snapchat-vgrt.onrender.com/api/auth/reset-password/${token}`,
+        `${API}/api/auth/reset-password/${token}`,
         { password }
       );
 

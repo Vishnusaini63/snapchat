@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const ForgotPassword = () => {
-
+const API = window.location.origin;
   const [email, setEmail] = useState("");
 
   const handleSubmit = async () => {
@@ -15,10 +15,10 @@ const ForgotPassword = () => {
 
     try {
 
-      const res = await axios.post(
-        "http://snapchat-vgrt.onrender.com/api/auth/forgot-password",
-        { email }
-      );
+   const res = await axios.post(
+  `${API}/api/auth/forgot-password`,
+  { email }
+);
 
       alert(res.data.message);
 

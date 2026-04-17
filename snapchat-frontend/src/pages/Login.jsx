@@ -11,7 +11,7 @@ const Login = () => {
   const [twoFaStep, setTwoFaStep] = useState(false);
   const [twoFaCode, setTwoFaCode] = useState("");
   const [twoFaData, setTwoFaData] = useState(null);
-
+const API = window.location.origin;
   // Auto redirect if token exists
 useEffect(() => {
   const token = localStorage.getItem("token");
@@ -30,10 +30,10 @@ const handleLogin = async () => {
 
   try {
 
-    const res = await axios.post(
-      "http://snapchat-vgrt.onrender.com/api/auth/login",
-      { email, password }
-    );
+const res = await axios.post(
+  `${API}/api/auth/login`,
+  { email, password }
+);
 
     if (res.data.twoFactorRequired) {
       setTwoFaData(res.data);
@@ -59,7 +59,7 @@ const handleLogin = async () => {
 
 const handleVerify2FA = async () => {
   try {
-    const res = await axios.post("http://snapchat-vgrt.onrender.com/api/auth/verify-2fa", {
+    const res = await axios.post(`${API}/api/auth/verify-2fa`, {
       userId: twoFaData.userId,
       code: twoFaCode,
       twoFaId: twoFaData.twoFaId

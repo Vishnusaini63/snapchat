@@ -6,7 +6,7 @@ const AddFriendsView = ({ user, onClose, onFriendAdded }) => {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // 🔥 NEW: Search Query state
   const token = localStorage.getItem("token");
-
+const API = window.location.origin;
   useEffect(() => {
     getUsers();
 
@@ -27,7 +27,7 @@ const AddFriendsView = ({ user, onClose, onFriendAdded }) => {
   }, []);
 
   const getUsers = () => {
-    axios.get("https://snapchat-vgrt.onrender.com/api/auth/users", {
+  axios.get(`${API}/api/auth/users`, {
       headers: { authorization: "Bearer " + token }
     })
     .then(res => {
@@ -37,7 +37,7 @@ const AddFriendsView = ({ user, onClose, onFriendAdded }) => {
   };
 
   const sendRequest = (id) => {
-    axios.post("https://snapchat-vgrt.onrender.com/api/auth/send-request",
+  axios.post(`${API}/api/auth/send-request`,
       { receiverId: id },
       { headers: { authorization: "Bearer " + token } }
     )

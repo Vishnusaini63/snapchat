@@ -5,13 +5,13 @@ import socket from "./socket.js";
 const FriendRequestsView = ({ user, onClose, onFriendAdded }) => {
   const [requests, setRequests] = useState([]);
   const token = localStorage.getItem("token");
-
+const API = window.location.origin;
   useEffect(() => {
     getRequests();
   }, []);
 
   const getRequests = () => {
-    axios.get("http://snapchat-vgrt.onrender.com/api/auth/requests", {
+  axios.get(`${API}/api/auth/requests`, {
       headers: { authorization: "Bearer " + token }
     })
     .then(res => {
@@ -21,7 +21,7 @@ const FriendRequestsView = ({ user, onClose, onFriendAdded }) => {
   };
 
   const acceptRequest = (id) => {
-    axios.post("http://snapchat-vgrt.onrender.com/api/auth/accept-request",
+  axios.post(`${API}/api/auth/accept-request`,
       { requestId: id },
       { headers: { authorization: "Bearer " + token } }
     )
@@ -35,7 +35,7 @@ const FriendRequestsView = ({ user, onClose, onFriendAdded }) => {
   };
 
   const rejectRequest = (id) => {
-    axios.post("http://snapchat-vgrt.onrender.com/api/auth/reject-request", 
+  axios.post(`${API}/api/auth/reject-request`,
       { requestId: id }, 
       { headers: { authorization: "Bearer " + token } }
     )
