@@ -1,0 +1,102 @@
+/* Main Layout */
+.snapchat-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.left-panel, .right-panel {
+  width: 250px;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.right-panel {
+  border-right: none;
+  border-left: 1px solid #ddd;
+}
+
+.center-panel {
+  flex: 1;
+  background-color: #000;
+  position: relative;
+}
+
+/* Sidebar (Chats) */
+.sidebar {
+  padding: 10px;
+}
+
+.chat-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #ddd;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Camera */
+.camera-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.capture-btn {
+  position: absolute;
+  bottom: 30px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 5px solid white;
+  background: transparent;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Story Bar */
+.story-bar {
+  padding: 10px;
+}
+
+.story-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #a355d9; /* Snapchat Purple */
+  background-color: #eee;
+  margin-bottom: 5px;
+}
+.story-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+
+.camera-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}

@@ -1,0 +1,279 @@
+body {
+  background: #e3e5e9;
+  font-family: sans-serif;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  color: white;
+}
+
+/* PROFILE */
+.profile-card {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-img {
+  width: 80px;
+  border-radius: 50%;
+}
+
+
+
+/* SETTINGS */
+.title {
+  margin: 20px 0 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.section h4 {
+  color: rgb(14, 14, 14);
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.row {
+  background: #1e293b;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* TOGGLE */
+.toggle {
+  width: 40px;
+  height: 20px;
+  background: gray;
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.toggle::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: white;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle.active {
+  background: cyan;
+}
+
+.toggle.active::after {
+  left: 20px;
+}
+
+/* BUTTON */
+.btn {
+  background: cyan;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn.danger {
+  background: red;
+}
+
+/* LOGOUT */
+.logout {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, pink, red);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+
+.exitbtn{
+    border: none;
+    background: none;
+}
+
+.edit{
+    color: black;
+    border: 2px solid black;
+    cursor: pointer;
+    width: 35%;
+    border-radius: 10px;
+position: absolute;
+top: 15%;
+right: 10px;
+  z-index: 1000;
+}
+
+
+/* 🔥 FULL SCREEN POPUP */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #00000080;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+
+  /* ❌ scroll band */
+  overflow: hidden;
+}
+
+/* 📦 BOX */
+.popup-box {
+  width: 100%;
+  max-width: 400px;
+  height: 50vh;
+  background: #fff;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔝 HEADER */
+.popup-header {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.popup-header h3 {
+  flex: 1;
+  text-align: center;
+  margin: 0;
+}
+
+.back-btn {
+  font-size: 20px;
+  cursor: pointer;
+  color: black;
+}
+
+/* 📄 BODY */
+.popup-body {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+/* INPUTS */
+.popup-body input,
+.popup-body textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+/* BUTTON */
+.save-btn {
+  margin-top: 10px;
+  padding: 12px;
+  border: none;
+  background: black;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+
+/* 🔥 center whole block */
+.profile-card {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* avatar */
+.profile-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+/* info block */
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;   /* 👈 spacing kam */
+}
+
+/* username */
+.username {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* small text */
+.sub {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+/* bio */
+.bio {
+  font-size: 12px;
+  color: #333;
+  margin: 2px 0;
+  max-width: 180px;
+}
+
+.avatar-box {
+  position: relative;
+  width: 65px;
+  height: 65px;
+}
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 📷 icon */
+.camera-icon {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: black;
+  color: white;
+  font-size: 12px;
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+}
