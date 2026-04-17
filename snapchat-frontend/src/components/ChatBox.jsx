@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../styles/chat.css";
+import "../styles/chat.css"; 
 import axios from "axios"; // 🔥 Import Axios
 
 import socket from "./socket.js";

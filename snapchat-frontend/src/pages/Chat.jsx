@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import ChatBox from "../components/ChatBox";
-import "../styles/chat.css";
+import "../styles/chat.css"; 
 
 const Chat = () => {
   const navigate = useNavigate();
