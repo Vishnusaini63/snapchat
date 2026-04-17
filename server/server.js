@@ -1673,7 +1673,7 @@ app.use((err, req, res, next) => {
 
 
 
-app.get("*", (req, res) => {
+app.use((req, res, next) => {
   if (req.path.startsWith("/api")) {
     return res.status(404).json({ error: "API route not found" });
   }
