@@ -382,6 +382,9 @@ app.post("/api/chat/mute-settings", (req, res) => {
 );
 });
 
+
+//visdfghj
+
 app.get("/api/chat/mute-settings/:userId/:friendId", (req, res) => {
   const { userId, friendId } = req.params;
   db.query("SELECT is_chat_muted as isChatMuted, is_call_muted as isCallMuted FROM mute_settings WHERE user_id = ? AND friend_id = ?", [userId, friendId], (err, result) => {
