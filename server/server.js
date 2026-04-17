@@ -130,9 +130,6 @@ app.post("/api/auth/reject-request", verifyToken, (req, res) => {
   );
 });
 
-app.get("/", (req, res) => {
-  res.send("Backend is running 🚀");
-});
 
 // 🔥 NEW: API to fetch Chat History from Database
 app.get("/api/messages/history/:user1/:user2", (req, res) => {
