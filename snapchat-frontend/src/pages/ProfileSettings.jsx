@@ -53,7 +53,7 @@ const [profilePic, setProfilePic] = useState("");
   const fetchUserInternal = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/user/${userId}`, {
+      const res = await fetch(`http://snapchat-vgrt.onrender.com/api/user/${userId}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -111,7 +111,7 @@ body.read_receipts = readReceipts;
 body.two_factor_auth = twoFA ? 1 : 0;
 
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/update-profile", {
+      const res = await fetch("http://snapchat-vgrt.onrender.com/api/update-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -145,7 +145,7 @@ const handleImageChange = async (e) => {
 
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:5000/api/upload-profile", {
+    const res = await fetch("http://snapchat-vgrt.onrender.com/api/upload-profile", {
       method: "POST",
       body: formData,
       headers: {
@@ -168,7 +168,7 @@ const handleImageChange = async (e) => {
     }
 
     // 🔥 UPDATE PROFILE
-    const updateRes = await fetch("http://localhost:5000/api/update-profile", {
+    const updateRes = await fetch("http://snapchat-vgrt.onrender.com/api/update-profile", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -209,7 +209,7 @@ const handleImageChange = async (e) => {
     setActiveStatus(val); // Pehle UI update kar do
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/update-profile", {
+      const res = await fetch("http://snapchat-vgrt.onrender.com/api/update-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -232,7 +232,7 @@ const handleImageChange = async (e) => {
     setTwoFA(val);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/update-profile", {
+      const res = await fetch("http://snapchat-vgrt.onrender.com/api/update-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -260,7 +260,7 @@ const handleImageChange = async (e) => {
     setReadReceipts(val); // Pehle UI update kar do
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/update-profile", {
+      const res = await fetch("http://snapchat-vgrt.onrender.com/api/update-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -280,7 +280,7 @@ const handleChangePassword = async () => {
     const token = localStorage.getItem("token"); // 🔥 GET TOKEN
 
     const res = await fetch(
-      "http://localhost:5000/api/auth/change-password",
+      "http://snapchat-vgrt.onrender.com/api/auth/change-password",
       {
         method: "POST",
         headers: {
@@ -320,7 +320,7 @@ const handleForgotInPopup = async () => {
     return;
   }
   try {
-    const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+    const res = await fetch("http://snapchat-vgrt.onrender.com/api/auth/forgot-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -346,7 +346,7 @@ const handleDeleteAccount = async () => {
 
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:5000/api/auth/delete-account", {
+    const res = await fetch("http://snapchat-vgrt.onrender.com/api/auth/delete-account", {
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -371,7 +371,7 @@ const handleDeleteAccount = async () => {
   const fetchLoginActivity = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/auth/login-activity", {
+      const res = await fetch("http://snapchat-vgrt.onrender.com/api/auth/login-activity", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
@@ -391,7 +391,7 @@ const handleDeleteAccount = async () => {
 
 const handleUnblock = async (friendId) => {
   try {
-    await axios.post("http://localhost:5000/api/friends/unblock", {
+    await axios.post("http://snapchat-vgrt.onrender.com/api/friends/unblock", {
       userId: userId,
       friendId
     });
@@ -404,7 +404,7 @@ const handleUnblock = async (friendId) => {
 
 const fetchBlocked = async () => {
   try {
-    const res = await axios.get(`http://localhost:5000/api/friends/blocked/${userId}`);
+    const res = await axios.get(`http://snapchat-vgrt.onrender.com/api/friends/blocked/${userId}`);
     setBlockedUsers(res.data);
   } catch (err) {
     console.error(err);
@@ -416,7 +416,7 @@ const fetchBlocked = async () => {
     if (!window.confirm("Kya aap is device se logout karna chahte hain?")) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/auth/logout-device", {
+      const res = await fetch("http://snapchat-vgrt.onrender.com/api/auth/logout-device", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

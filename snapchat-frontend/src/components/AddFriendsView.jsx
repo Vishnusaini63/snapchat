@@ -27,7 +27,7 @@ const AddFriendsView = ({ user, onClose, onFriendAdded }) => {
   }, []);
 
   const getUsers = () => {
-    axios.get("http://localhost:5000/api/auth/users", {
+    axios.get("http://snapchat-vgrt.onrender.com/api/auth/users", {
       headers: { authorization: "Bearer " + token }
     })
     .then(res => {
@@ -37,7 +37,7 @@ const AddFriendsView = ({ user, onClose, onFriendAdded }) => {
   };
 
   const sendRequest = (id) => {
-    axios.post("http://localhost:5000/api/auth/send-request",
+    axios.post("http://snapchat-vgrt.onrender.com/api/auth/send-request",
       { receiverId: id },
       { headers: { authorization: "Bearer " + token } }
     )

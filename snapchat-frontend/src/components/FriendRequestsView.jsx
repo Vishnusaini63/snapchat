@@ -11,7 +11,7 @@ const FriendRequestsView = ({ user, onClose, onFriendAdded }) => {
   }, []);
 
   const getRequests = () => {
-    axios.get("http://localhost:5000/api/auth/requests", {
+    axios.get("http://snapchat-vgrt.onrender.com/api/auth/requests", {
       headers: { authorization: "Bearer " + token }
     })
     .then(res => {
@@ -21,7 +21,7 @@ const FriendRequestsView = ({ user, onClose, onFriendAdded }) => {
   };
 
   const acceptRequest = (id) => {
-    axios.post("http://localhost:5000/api/auth/accept-request",
+    axios.post("http://snapchat-vgrt.onrender.com/api/auth/accept-request",
       { requestId: id },
       { headers: { authorization: "Bearer " + token } }
     )
@@ -35,7 +35,7 @@ const FriendRequestsView = ({ user, onClose, onFriendAdded }) => {
   };
 
   const rejectRequest = (id) => {
-    axios.post("http://localhost:5000/api/auth/reject-request", 
+    axios.post("http://snapchat-vgrt.onrender.com/api/auth/reject-request", 
       { requestId: id }, 
       { headers: { authorization: "Bearer " + token } }
     )
