@@ -980,7 +980,7 @@ socket.on("userBusy", () => {
       setDeleteAfter(data.deleteMode);
     });
 
-    socket.on("receive_voice", handleReceiveMessage); // 🔥 Listen for voice specifically
+  
     socket.on("stopTyping", handleStopTyping);
     socket.on("recording", handleRecording);
     socket.on("stopRecording", handleStopRecording);
@@ -1118,7 +1118,11 @@ const msgData = {
 };
 
   socket.emit("sendMessage", msgData);
-  setMessages((prev) => [...prev, msgData]);
+  setMessages((prev) => {
+  const exists = prev.some(m => m.localId === msgData.localId);
+  if (exists) return prev;
+  return [...prev, msgData];
+});
   setReplyTo(null);
 
   setMessage("");
