@@ -116,7 +116,9 @@ fileFilter: (req, file, cb) => {
   if (isValid) {
     cb(null, true);
   } else {
-    cb(new Error("Invalid file ❌"), false);
+    const error = new Error("Invalid file type ❌");
+    error.status = 400;
+    cb(error, false);
   }
 }
 });
@@ -447,10 +449,11 @@ app.use("/api/messages", messageRoutes);
 
 // 🔥 Updated to use upload.single("image") to match frontend field name
 app.post("/api/upload-profile", upload.single("image"), (req, res) => {
-  console.log("FILE:", req.file);
+    console.log("Profile upload request received.");
+  console.log("req.file:", req.file);
 
   if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
+    return res.status(400).json({ error: "No file uploaded. Ensure the form field name is 'image'." });
   }
 
   const filePath = `/uploads/${req.file.filename}`;

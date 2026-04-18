@@ -189,10 +189,10 @@ exports.forgotPassword = (req, res) => {
 
       const transporter = nodemailer.createTransport({
         service: "gmail",
-        auth: {
-          user: "sainivishnu2103@gmail.com",
-          pass: "fcdu lvpv zcfr rqfg" // 🔐 app password
-        }
+    auth: {
+  user: process.env.EMAIL_USER,
+  pass: process.env.EMAIL_PASS
+}
       });
 const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
