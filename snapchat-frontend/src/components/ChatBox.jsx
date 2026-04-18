@@ -1032,7 +1032,7 @@ socket.off("reactionUpdated");
       setChatTheme(theme);
       setShowThemePopup(false);
 
-      await axios.post("`${API}/api/chat/theme", {
+      await axios.post(`${API}/api/chat/theme`, {
         user1: user.id,
         user2: friend.id,
         theme,
@@ -1071,7 +1071,7 @@ const handleWallpaperChange = async (e) => {
   formData.append("type", wallpaperType); // ✅ IMPORTANT
 
   try {
-    const res = await axios.post("`${API}/api/chat/wallpaper", formData);
+    const res = await axios.post(`${API}/api/chat/wallpaper`, formData);
 setChatWallpaper(null); // 🔥 reset
 
 setTimeout(() => {
@@ -1174,7 +1174,7 @@ const startRecording = async () => {
         const formData = new FormData();
         formData.append("audio", audioBlob);
 
-        const res = await fetch("`${API}/api/upload-audio", {
+        const res = await fetch(`${API}/api/upload-audio`, {
           method: "POST",
           body: formData
         });
@@ -1299,7 +1299,7 @@ const formatRecordingTime = (seconds) => {
     formData.append("media", file);
 
     try {
-      const res = await axios.post("`${API}/api/upload-media", formData);
+      const res = await axios.post(`${API}/api/upload-media`, formData);
       const { url, type } = res.data;
       const mediaType = forceDocument ? "document" : (type === "image" ? "image" : (type === "video" ? "video" : "document")); // 🔥 NEW: Handle documents
       const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
