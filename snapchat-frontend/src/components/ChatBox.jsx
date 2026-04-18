@@ -66,7 +66,6 @@ const [recordingTime, setRecordingTime] = useState(0);
 const [deleteAfter, setDeleteAfter] = useState("never");
 const [isCallMuted, setIsCallMuted] = useState(false);
 
-const API = window.location.origin;
 const emojiCategories = [
   {
     name: "Smileys & Emotion",
@@ -270,7 +269,7 @@ const deleteForEveryone = () => {
     formData.append("media", blob, type === "image" ? "capture.jpg" : "capture.webm");
 
     try {
-      const res = await axios.post(`${API}/api/upload-media`, formData);
+      const res = await axios.post(`/api/upload-media`, formData);
       const { url } = res.data;
       const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const localId = Date.now().toString();
@@ -597,7 +596,7 @@ useEffect(() => {
     const fetchMessages = async () => {
       if (!user?.id || !friend?.id) return; // 🔥 Safety check added here too
       try {
-        const res = await axios.get(`${API}/api/messages/history/${user.id}/${friend.id}`);
+        const res = await axios.get(`/api/messages/history/${user.id}/${friend.id}`);
         
     const formattedMessages = res.data.map(msg => ({
   id: msg.id,
@@ -1104,7 +1103,7 @@ const sendMessage = () => {
 
   // 🔥 SEND / REPLY MODE ONLY
 const msgData = {
-  localId: Date.now().toString(),
+  localId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
   sender: user.id,
   receiver: friend.id,
   text: message,
@@ -1178,7 +1177,7 @@ const startRecording = async () => {
         const formData = new FormData();
         formData.append("audio", audioBlob);
 
-        const res = await fetch(`${API}/api/upload-audio`, {
+        const res = await fetch(`/api/upload-audio`, {
           method: "POST",
           body: formData
         });

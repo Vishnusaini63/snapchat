@@ -102,15 +102,16 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 🔥 Corrected to 10MB for Render stability
 fileFilter: (req, file, cb) => {
   const allowedTypes = [
-    "audio/",
-    "image/",
-    "video/",
-    "application/pdf"
+    "audio",
+    "image",
+    "video",
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument",
+    "text/plain"
   ];
 
-  const isValid = allowedTypes.some(type =>
-    file.mimetype.startsWith(type)
-  );
+  const isValid = allowedTypes.some(type => file.mimetype.includes(type));
 
   if (isValid) {
     cb(null, true);
@@ -886,6 +887,7 @@ socket.on("enterChat", ({ userId, friendId }) => {
 socket.on("registerUser", (userId) => {
   currentUserId = String(userId);
   users[currentUserId] = socket.id;
+  socket.join(String(userId)); // 🔥 Join a room named after the userId
 
   const now = new Date().toISOString();
 
@@ -1050,13 +1052,11 @@ socket.on("sendMessage", async (data) => {
       deleteMode: deleteMode || "never"
     };
 
-    // 📤 send to receiver
-    if (receiverSocket) {
-      io.to(receiverSocket).emit("receiveMessage", messageData);
-    }
+    // 📤 Send to the receiver's personal room
+    io.to(String(receiver)).emit("receiveMessage", messageData);
 
     // 📤 send back to sender
-    io.to(socket.id).emit("messageSent", { 
+    socket.emit("messageSent", { 
       localId, 
       status, 
       id: result.insertId,
