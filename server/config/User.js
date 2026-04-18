@@ -72,8 +72,58 @@ const createSessionsTable = () => {
   });
 };
 
+// Ensure friends table exists
+const createFriendsTable = () => {
+  const sql = `
+    CREATE TABLE IF NOT EXISTS friends (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      sender_id INT NOT NULL,
+      receiver_id INT NOT NULL,
+      status ENUM('pending', 'accepted', 'blocked') DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `;
+  db.query(sql, (err) => {
+    if (err) {
+      console.error('Error creating friends table:', err);
+    } else {
+      console.log('✅ Friends table ready');
+    }
+  });
+};
+
+// Ensure friend_nicknames table exists
+const createNicknamesTable = () => {
+  const sql = `
+    CREATE TABLE IF NOT EXISTS friend_nicknames (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      friend_id INT NOT NULL,
+      nickname VARCHAR(100),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `;
+  db.query(sql, (err) => {
+    if (err) {
+      console.error('Error creating friend_nicknames table:', err);
+    } else {
+      console.log('✅ Friend Nicknames table ready');
+    }
+  });
+};
+
 // Call on startup
 createUsersTable();
 createSessionsTable();
+createFriendsTable();
+createNicknamesTable();
 
-module.exports = { createUsersTable, createSessionsTable };
+module.exports = { 
+  createUsersTable, 
+  createSessionsTable, 
+  createFriendsTable, 
+  createNicknamesTable 
+};
