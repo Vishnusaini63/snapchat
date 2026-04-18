@@ -866,11 +866,11 @@ socket.on("messageEditedForMe", ({ messageId, newText }) => {
 
 
 const handleMessageStatus = (data) => {
-  const statusLevels = { 'sent': 0, 'delivered': 1, 'read': 2 };
+  const statusLevels = { 'sending': 0, 'sent': 1, 'delivered': 2, 'read': 3 };
   const newLevel = statusLevels[data.status] || 0;
 
   setMessages(prev => prev.map(msg => {
-    const currentLevel = statusLevels[msg.status] || 0;
+    const currentLevel = statusLevels[msg.status] !== undefined ? statusLevels[msg.status] : 0;
 
     // 🔥 1. Check if individual ID or ID in array matches
     const isMatch = (data.id && msg.id === data.id) || 
@@ -881,6 +881,9 @@ const handleMessageStatus = (data) => {
     const isBulkMatch = data.all && String(data.friendId) === String(friend.id);
 
     if (isMatch || isBulkMatch) {
+      if (data.status === 'error') {
+        return { ...msg, status: 'error' };
+      }
       // 🚫 Status downgrade prevent karein (Don't go from Read -> Delivered)
       if (newLevel > currentLevel) {
         return {
