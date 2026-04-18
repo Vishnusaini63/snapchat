@@ -881,11 +881,8 @@ const handleMessageStatus = (data) => {
     const isBulkMatch = data.all && String(data.friendId) === String(friend.id);
 
     if (isMatch || isBulkMatch) {
-      if (data.status === 'error') {
-        return { ...msg, status: 'error' };
-      }
-      // 🚫 Status downgrade prevent karein (Don't go from Read -> Delivered)
-      if (newLevel > currentLevel) {
+      // ✅ Update status if it's a valid transition or an error
+      if (data.status === 'error' || newLevel > currentLevel) {
         return {
           ...msg,
           status: data.status,
@@ -1332,10 +1329,11 @@ const formatRecordingTime = (seconds) => {
   };
 
   const getStatusIcon = (status) => {
-   
-
-    
     switch(status) {
+      case 'sending':
+        return <span style={{fontSize: '11px', color: '#888', marginLeft: '4px'}}>🕒</span>;
+      case 'error':
+        return <span title="Failed to send" style={{fontSize: '14px', color: 'red', marginLeft: '4px'}}>⚠️</span>;
       case 'sent': 
         return (
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px' }}>

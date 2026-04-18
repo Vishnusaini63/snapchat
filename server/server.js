@@ -1067,24 +1067,26 @@ socket.on("sendMessage", async (data) => {
 
 
 socket.on("messageOpened", async ({ messageId }) => {
-  const [rows] = await db.promise().query(
-    "SELECT delete_mode, delete_at FROM messages WHERE id = ?",
-    [messageId]
-  );
-
-  if (rows[0]?.delete_mode === "after_view" && !rows[0]?.delete_at) {
-    // 🔥 1 minute baad delete karne ke liye DB mein timestamp update karein
-    await db.promise().query(
-      "UPDATE messages SET delete_at = DATE_ADD(NOW(), INTERVAL 1 MINUTE) WHERE id = ?",
+  try {
+    const [rows] = await db.promise().query(
+      "SELECT delete_mode, delete_at FROM messages WHERE id = ?",
       [messageId]
     );
 
-    // 🔥 1 minute (60000ms) ka delay timer
-    setTimeout(async () => {
-      await db.promise().query("DELETE FROM messages WHERE id = ?", [messageId]);
-      io.emit("messageDeleted", { messageId });
-    }, 60000);
-  }
+    if (rows[0]?.delete_mode === "after_view" && !rows[0]?.delete_at) {
+      // 🔥 5 minute baad delete karne ke liye timestamp update karein
+      await db.promise().query(
+        "UPDATE messages SET delete_at = DATE_ADD(NOW(), INTERVAL 5 MINUTE) WHERE id = ?",
+        [messageId]
+      );
+
+      // 🔥 5 minute (300000ms) ka delay timer
+      setTimeout(async () => {
+        await db.promise().query("DELETE FROM messages WHERE id = ?", [messageId]);
+        io.emit("messageDeleted", { messageId });
+      }, 300000);
+    }
+  } catch (err) { console.error("messageOpened error:", err); }
 });
 
 socket.on("send_voice", async (data) => {
@@ -1204,12 +1206,12 @@ socket.on("messageRead", (data) => {
     if (err || !msgRows.length) return;
     const { delete_mode, delete_at, sender_id } = msgRows[0];
 
-    // 🔥 1. TIMER START
+    // 🔥 1. TIMER START (5 Minutes)
     if (delete_mode === 'after_view' && !delete_at) {
-      db.query("UPDATE messages SET delete_at = DATE_ADD(NOW(), INTERVAL 1 MINUTE) WHERE id=?", [id]);
+      db.query("UPDATE messages SET delete_at = DATE_ADD(NOW(), INTERVAL 5 MINUTE) WHERE id=?", [id]);
       setTimeout(() => {
         db.query("DELETE FROM messages WHERE id = ?", [id], () => io.emit("messageDeleted", { messageId: id }));
-      }, 60000);
+      }, 300000);
     }
 
     // 🔥 2. BLUE TICK LOGIC
