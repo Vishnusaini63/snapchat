@@ -99,7 +99,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 🔥 Corrected to 10MB
+  limits: { fileSize: 1000* 1024 * 1024 }, // 🔥 Increased to 10MB for high-res photos
 fileFilter: (req, file, cb) => {
   const allowedTypes = [
     "audio/",
@@ -124,11 +124,7 @@ const inCallUsers = new Set(); // 🔥 track busy users
 const app = express();
 const busyUsers = {};
 // middleware
-app.use(cors({
-  origin: "https://snapchat-vgrt.onrender.com",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 
 app.use("/uploads", express.static("uploads", {
@@ -467,11 +463,11 @@ const server = http.createServer(app);
 // 👇 socket setup
 const io = new Server(server, {
   cors: {
-    origin: "https://snapchat-vgrt.onrender.com",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "*",
+    methods: ["GET", "POST"],
     credentials: true
   },
-  transports: ['polling', 'websocket'], // 🔥 Allow polling for better reliability on Render
+  transports: ['websocket', 'polling'],
   pingTimeout: 60000,
   pingInterval: 25000
 });
@@ -1620,10 +1616,20 @@ socket.on("send_media", async (data) => {
   const sql = `
   INSERT INTO messages 
   (sender_id, receiver_id, message, status, type, local_id, duration, delete_mode, delete_at, is_viewed) 
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+  VALUES (
+    ${db.escape(senderId)}, 
+    ${db.escape(receiverId)}, 
+    ${db.escape(mediaUrl)}, 
+    ${db.escape(status)}, 
+    ${db.escape(mediaType)},
+    ${db.escape(localId)},
+    ${db.escape(duration || 0)},
+    ${db.escape(deleteMode || 'never')},
+    ${db.escape(deleteAt)},
+    ${isViewed}
+  )`;
 
-  db.query(sql, [senderId, receiverId, mediaUrl, status, mediaType, localId, duration || 0, deleteMode || 'never', deleteAt, isViewed], (err, result) => {
+  db.query(sql, (err, result) => {
     if (err) {
       console.error("❌ Media save error:", err);
       return;
