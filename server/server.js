@@ -37,6 +37,50 @@ db.query(`
   )
 `, (err) => { if (err) console.error("❌ Mute settings table error:", err); });
 
+// 🔥 Ensure wallpaper table exists
+db.query(`
+  CREATE TABLE IF NOT EXISTS chat_wallpapers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user1 INT NOT NULL,
+    user2 INT NOT NULL,
+    wallpaper TEXT NOT NULL,
+    is_global TINYINT(1) DEFAULT 0,
+    owner_id INT DEFAULT NULL
+  )
+`, (err) => { if (err) console.error("❌ Wallpaper table error:", err); });
+
+// 🔥 Ensure themes table exists
+db.query(`
+  CREATE TABLE IF NOT EXISTS chat_themes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user1 INT NOT NULL,
+    user2 INT NOT NULL,
+    theme VARCHAR(50) DEFAULT 'default',
+    is_global TINYINT(1) DEFAULT 0,
+    owner_id INT DEFAULT NULL
+  )
+`, (err) => { if (err) console.error("❌ Themes table error:", err); });
+
+// 🔥 Ensure deleted/edited tracking tables exist
+db.query(`
+  CREATE TABLE IF NOT EXISTS deleted_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    message_id INT NOT NULL,
+    UNIQUE KEY (user_id, message_id)
+  )
+`, (err) => { if (err) console.error("❌ Deleted messages table error:", err); });
+
+db.query(`
+  CREATE TABLE IF NOT EXISTS edited_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    message_id INT NOT NULL,
+    edited_text TEXT NOT NULL,
+    UNIQUE KEY (user_id, message_id)
+  )
+`, (err) => { if (err) console.error("❌ Edited messages table error:", err); });
+
 // � Ensure uploads directory exists to prevent ENOENT errors
 const uploadDir = "uploads/";
 if (!fs.existsSync(uploadDir)) {
@@ -55,7 +99,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage,
-  limits: { fileSize: 1000* 1024 * 1024 }, // 🔥 Increased to 10MB for high-res photos
+  limits: { fileSize: 10 * 1024 * 1024 }, // 🔥 Corrected to 10MB
 fileFilter: (req, file, cb) => {
   const allowedTypes = [
     "audio/",
@@ -139,19 +183,19 @@ const sql = `
 SELECT m.*, em.edited_text
 FROM messages m
 LEFT JOIN edited_messages em 
-  ON m.id = em.message_id AND em.user_id = ${db.escape(user1)}
+  ON m.id = em.message_id AND em.user_id = ?
 WHERE (
-  (m.sender_id = ${db.escape(user1)} AND m.receiver_id = ${db.escape(user2)}) 
+  (m.sender_id = ? AND m.receiver_id = ?) 
   OR 
-  (m.sender_id = ${db.escape(user2)} AND m.receiver_id = ${db.escape(user1)})
+  (m.sender_id = ? AND m.receiver_id = ?)
 )
 AND m.id NOT IN (
-  SELECT message_id FROM deleted_messages WHERE user_id = ${db.escape(user1)}
+  SELECT message_id FROM deleted_messages WHERE user_id = ?
 )
 ORDER BY m.created_at ASC
 `;
   
-  db.query(sql, (err, results) => {
+  db.query(sql, [user1, user1, user2, user2, user1, user1], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
@@ -987,21 +1031,10 @@ socket.on("sendMessage", async (data) => {
   const sql = `
   INSERT INTO messages 
   (sender_id, receiver_id, message, status, type, local_id, reply_to, delete_mode, delete_at, is_viewed) 
-  VALUES (
-    ${db.escape(sender)}, 
-    ${db.escape(receiver)}, 
-    ${db.escape(text)}, 
-    ${db.escape(status)}, 
-    ${db.escape(type || 'text')}, 
-    ${db.escape(localId)},
-    ${db.escape(replyTo)},
-    ${db.escape(deleteMode || 'never')},
-    ${db.escape(deleteAt)},
-    ${isViewed}
-  )
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(sql, (err, result) => {
+  db.query(sql, [sender, receiver, text, status, type || 'text', localId, replyTo, deleteMode || 'never', deleteAt, isViewed], (err, result) => {
     if (err) {
       console.error('Message save error:', err);
       return io.to(socket.id).emit("messageSent", { localId, status: 'error' });
@@ -1081,20 +1114,10 @@ socket.on("send_voice", async (data) => {
   const sql = `
   INSERT INTO messages 
   (sender_id, receiver_id, message, status, type, duration, local_id, delete_mode, delete_at, is_viewed) 
-  VALUES (
-    ${db.escape(senderId)}, 
-    ${db.escape(receiverId)}, 
-    ${db.escape(audioUrl)}, 
-    ${db.escape(status)}, 
-    'voice', 
-    ${db.escape(duration || 0)},
-    ${db.escape(localId)},
-    ${db.escape(deleteMode || 'never')},
-    ${db.escape(deleteAt)},
-    ${isViewed}
-  )`;
+  VALUES (?, ?, ?, ?, 'voice', ?, ?, ?, ?, ?)
+  `;
 
-  db.query(sql, (err, result) => {
+  db.query(sql, [senderId, receiverId, audioUrl, status, duration || 0, localId, deleteMode || 'never', deleteAt, isViewed], (err, result) => {
     if (err) {
       console.error("❌ Voice save error:", err);
       return;
@@ -1319,16 +1342,9 @@ socket.on("callUser", ({ to, from, name, callType }) => {
 
   const sql = `INSERT INTO messages 
   (sender_id, receiver_id, message, status, type, duration) 
-  VALUES (
-    ${db.escape(from)}, 
-    ${db.escape(to)}, 
-    ${db.escape(startMsg)}, 
-    'sent', 
-    ${db.escape(typeValue)},
-    0
-  )`;
+  VALUES (?, ?, ?, 'sent', ?, 0)`;
 
-  db.query(sql, (err) => {
+  db.query(sql, [from, to, startMsg, typeValue], (err) => {
     if (err) {
       console.error("❌ Call start save error:", err);
     }
@@ -1386,16 +1402,9 @@ socket.on("endCall", ({ from, to, duration=0, callType }) => {
   // ✅ SAVE IN DB
   const sql = `INSERT INTO messages 
   (sender_id, receiver_id, message, status, type, duration) 
-  VALUES (
-    ${db.escape(from)}, 
-    ${db.escape(to)}, 
-    ${db.escape(callLogMsg)}, 
-    'read', 
-    ${db.escape(typeValue)},
-    ${db.escape(duration || 0)}
-  )`;
+  VALUES (?, ?, ?, 'read', ?, ?)`;
 
- db.query(sql, (err) => {
+ db.query(sql, [from, to, callLogMsg, typeValue, duration || 0], (err) => {
   if (err) {
     console.error("❌ DB Error saving call log:", err.sqlMessage || err);
   } else {
@@ -1455,16 +1464,9 @@ socket.on("rejectCall", ({ to, from, callType }) => {
   // ✅ FIX SQL: Sender=Caller(to), Receiver=Rejector(from)
   const sql = `INSERT INTO messages 
   (sender_id, receiver_id, message, status, type, duration) 
-  VALUES (
-    ${db.escape(to)}, 
-    ${db.escape(from)}, 
-    ${db.escape(dbMsg)}, 
-    'read', 
-    ${db.escape(typeValue)},
-    0
-  )`;
+  VALUES (?, ?, ?, 'read', ?, 0)`;
 
-  db.query(sql, (err) => {
+  db.query(sql, [to, from, dbMsg, typeValue], (err) => {
     if (err) {
       console.error("❌ DB Error saving reject log:", err.sqlMessage || err);
     }
@@ -1614,20 +1616,10 @@ socket.on("send_media", async (data) => {
   const sql = `
   INSERT INTO messages 
   (sender_id, receiver_id, message, status, type, local_id, duration, delete_mode, delete_at, is_viewed) 
-  VALUES (
-    ${db.escape(senderId)}, 
-    ${db.escape(receiverId)}, 
-    ${db.escape(mediaUrl)}, 
-    ${db.escape(status)}, 
-    ${db.escape(mediaType)},
-    ${db.escape(localId)},
-    ${db.escape(duration || 0)},
-    ${db.escape(deleteMode || 'never')},
-    ${db.escape(deleteAt)},
-    ${isViewed}
-  )`;
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
 
-  db.query(sql, (err, result) => {
+  db.query(sql, [senderId, receiverId, mediaUrl, status, mediaType, localId, duration || 0, deleteMode || 'never', deleteAt, isViewed], (err, result) => {
     if (err) {
       console.error("❌ Media save error:", err);
       return;
