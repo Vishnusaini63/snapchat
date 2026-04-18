@@ -124,7 +124,11 @@ const inCallUsers = new Set(); // 🔥 track busy users
 const app = express();
 const busyUsers = {};
 // middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://snapchat-vgrt.onrender.com",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 
 app.use("/uploads", express.static("uploads", {
@@ -463,11 +467,11 @@ const server = http.createServer(app);
 // 👇 socket setup
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
+    origin: "https://snapchat-vgrt.onrender.com",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   },
-  transports: ['websocket', 'polling'],
+  transports: ['polling', 'websocket'], // 🔥 Allow polling for better reliability on Render
   pingTimeout: 60000,
   pingInterval: 25000
 });
