@@ -14,7 +14,11 @@ const createUsersTable = () => {
       dob DATE,
       city VARCHAR(100),
       bio TEXT,
-      profile_pic TEXT
+      profile_pic TEXT,
+      two_factor_auth TINYINT(1) DEFAULT 0,
+      two_fa_id VARCHAR(255),
+      two_fa_code VARCHAR(10),
+      two_fa_status VARCHAR(50)
     )
   `;
   db.query(sql, (err) => {
@@ -24,7 +28,18 @@ const createUsersTable = () => {
       console.log('✅ Users table ready');
       
       // Ensure missing columns exist if the table was already created
-      const columns = ["dob DATE", "city VARCHAR(100)", "bio TEXT", "profile_pic TEXT"];
+      const columns = [
+        "dob DATE", 
+        "city VARCHAR(100)", 
+        "bio TEXT", 
+        "profile_pic TEXT",
+        "two_factor_auth TINYINT(1) DEFAULT 0",
+        "two_fa_id VARCHAR(255)",
+        "two_fa_code VARCHAR(10)",
+        "two_fa_status VARCHAR(50)",
+        "reset_token VARCHAR(255)",
+        "reset_token_expire DATETIME"
+      ];
       columns.forEach(col => {
         db.query(`ALTER TABLE users ADD COLUMN ${col}`, (err) => {
           // Silence errors if columns already exist
@@ -34,7 +49,31 @@ const createUsersTable = () => {
   });
 };
 
+// Ensure sessions table exists
+const createSessionsTable = () => {
+  const sql = `
+    CREATE TABLE IF NOT EXISTS user_sessions (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      token TEXT NOT NULL,
+      device_name VARCHAR(255),
+      ip_address VARCHAR(100),
+      is_active TINYINT(1) DEFAULT 1,
+      last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `;
+  db.query(sql, (err) => {
+    if (err) {
+      console.error('Error creating user_sessions table:', err);
+    } else {
+      console.log('✅ User Sessions table ready');
+    }
+  });
+};
+
 // Call on startup
 createUsersTable();
+createSessionsTable();
 
-module.exports = { createUsersTable };
+module.exports = { createUsersTable, createSessionsTable };
