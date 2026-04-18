@@ -18,7 +18,9 @@ const createUsersTable = () => {
       two_factor_auth TINYINT(1) DEFAULT 0,
       two_fa_id VARCHAR(255),
       two_fa_code VARCHAR(10),
-      two_fa_status VARCHAR(50)
+      two_fa_status VARCHAR(50),
+      active_status TINYINT(1) DEFAULT 1,
+      read_receipts TINYINT(1) DEFAULT 1
     )
   `;
   db.query(sql, (err) => {
@@ -38,7 +40,9 @@ const createUsersTable = () => {
         "two_fa_code VARCHAR(10)",
         "two_fa_status VARCHAR(50)",
         "reset_token VARCHAR(255)",
-        "reset_token_expire DATETIME"
+        "reset_token_expire DATETIME",
+        "active_status TINYINT(1) DEFAULT 1",
+        "read_receipts TINYINT(1) DEFAULT 1"
       ];
       columns.forEach(col => {
         db.query(`ALTER TABLE users ADD COLUMN ${col}`, (err) => {

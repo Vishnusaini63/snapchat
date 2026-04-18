@@ -99,7 +99,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage,
-  limits: { fileSize: 1000* 1024 * 1024 }, // 🔥 Increased to 10MB for high-res photos
+  limits: { fileSize: 10 * 1024 * 1024 }, // 🔥 Corrected to 10MB for Render stability
 fileFilter: (req, file, cb) => {
   const allowedTypes = [
     "audio/",
