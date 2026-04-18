@@ -467,7 +467,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     credentials: true
   },
-  transports: ['websocket', 'polling'],
+  transports: ['polling', 'websocket'], // 🔥 Polling first for reliability
   pingTimeout: 60000,
   pingInterval: 25000
 });
@@ -1616,20 +1616,10 @@ socket.on("send_media", async (data) => {
   const sql = `
   INSERT INTO messages 
   (sender_id, receiver_id, message, status, type, local_id, duration, delete_mode, delete_at, is_viewed) 
-  VALUES (
-    ${db.escape(senderId)}, 
-    ${db.escape(receiverId)}, 
-    ${db.escape(mediaUrl)}, 
-    ${db.escape(status)}, 
-    ${db.escape(mediaType)},
-    ${db.escape(localId)},
-    ${db.escape(duration || 0)},
-    ${db.escape(deleteMode || 'never')},
-    ${db.escape(deleteAt)},
-    ${isViewed}
-  )`;
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
 
-  db.query(sql, (err, result) => {
+  db.query(sql, [senderId, receiverId, mediaUrl, status, mediaType, localId, duration || 0, deleteMode || 'never', deleteAt, isViewed], (err, result) => {
     if (err) {
       console.error("❌ Media save error:", err);
       return;
