@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../styles/chat.css"; 
+import "../styles/chat.css";
 import axios from "axios"; // 🔥 Import Axios
 
 import socket from "./socket.js";
@@ -65,8 +65,6 @@ const isCancelledRef = useRef(false);
 const [recordingTime, setRecordingTime] = useState(0);
 const [deleteAfter, setDeleteAfter] = useState("never");
 const [isCallMuted, setIsCallMuted] = useState(false);
-
-const API = window.location.origin;
 const emojiCategories = [
   {
     name: "Smileys & Emotion",
@@ -866,11 +864,11 @@ socket.on("messageEditedForMe", ({ messageId, newText }) => {
 
 
 const handleMessageStatus = (data) => {
-  const statusLevels = { 'sending': 0, 'sent': 1, 'delivered': 2, 'read': 3 };
+  const statusLevels = { 'sent': 0, 'delivered': 1, 'read': 2 };
   const newLevel = statusLevels[data.status] || 0;
 
   setMessages(prev => prev.map(msg => {
-    const currentLevel = statusLevels[msg.status] !== undefined ? statusLevels[msg.status] : 0;
+    const currentLevel = statusLevels[msg.status] || 0;
 
     // 🔥 1. Check if individual ID or ID in array matches
     const isMatch = (data.id && msg.id === data.id) || 
@@ -881,8 +879,8 @@ const handleMessageStatus = (data) => {
     const isBulkMatch = data.all && String(data.friendId) === String(friend.id);
 
     if (isMatch || isBulkMatch) {
-      // ✅ Update status if it's a valid transition or an error
-      if (data.status === 'error' || newLevel > currentLevel) {
+      // 🚫 Status downgrade prevent karein (Don't go from Read -> Delivered)
+      if (newLevel > currentLevel) {
         return {
           ...msg,
           status: data.status,
@@ -980,7 +978,7 @@ socket.on("userBusy", () => {
       setDeleteAfter(data.deleteMode);
     });
 
-  
+    socket.on("receive_voice", handleReceiveMessage); // 🔥 Listen for voice specifically
     socket.on("stopTyping", handleStopTyping);
     socket.on("recording", handleRecording);
     socket.on("stopRecording", handleStopRecording);
@@ -1118,11 +1116,7 @@ const msgData = {
 };
 
   socket.emit("sendMessage", msgData);
-  setMessages((prev) => {
-  const exists = prev.some(m => m.localId === msgData.localId);
-  if (exists) return prev;
-  return [...prev, msgData];
-});
+  setMessages((prev) => [...prev, msgData]);
   setReplyTo(null);
 
   setMessage("");
@@ -1333,11 +1327,10 @@ const formatRecordingTime = (seconds) => {
   };
 
   const getStatusIcon = (status) => {
+   
+
+    
     switch(status) {
-      case 'sending':
-        return <span style={{fontSize: '11px', color: '#888', marginLeft: '4px'}}>🕒</span>;
-      case 'error':
-        return <span title="Failed to send" style={{fontSize: '14px', color: 'red', marginLeft: '4px'}}>⚠️</span>;
       case 'sent': 
         return (
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
@@ -2570,10 +2563,3 @@ const styles = `
 export default ChatBox;
 
 
-
-      {/* Reactions dfgchjbnkml;,kjvcxvbnm,./mnvcxzvbnm,.mnbvcxvbnm,.kjxzcvjklkjhgfdxzcvbjn*/}
-     {/* Reactions dfgchjbnkml;,kjvcxvbnm,./mnvcxzvbnm,.mnbvcxvbnm,.kjxzcvjklkjhgfdxzcvbjn*/}
-      {/* Reactions dfgchjbnkml;,kjvcxvbnm,./mnvcxzvbnm,.mnbvcxvbnm,.kjxzcvjklkjhgfdxzcvbjn*/}
-      {/* Reactions dfgchjbnkml;,kjvcxvbnm,./mnvcxzvbnm,.mnbvcxvbnm,.kjxzcvjklkjhgfdxzcvbjn*/}
-      {/* Reactions dfgchjbnkml;,kjvcxvbnm,./mnvcxzvbnm,.mnbvcxvbnm,.kjxzcvjklkjhgfdxzcvbjn*/}
-     
