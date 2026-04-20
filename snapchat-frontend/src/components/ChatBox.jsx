@@ -65,6 +65,7 @@ const isCancelledRef = useRef(false);
 const [recordingTime, setRecordingTime] = useState(0);
 const [deleteAfter, setDeleteAfter] = useState("never");
 const [isCallMuted, setIsCallMuted] = useState(false);
+ const API = window.location.origin;
 const emojiCategories = [
   {
     name: "Smileys & Emotion",
